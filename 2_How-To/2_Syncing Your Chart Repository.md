@@ -1,0 +1,1 @@
+**Note**: 해당 문서의 내용은 chart repo로 사용되는 GCS  bucket과 관련된 것이다.

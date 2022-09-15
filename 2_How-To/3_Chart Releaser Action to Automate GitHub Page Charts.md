@@ -1,0 +1,1 @@
+Github 페이지를 통한 chart 릴리즈 자동화를 위한 Chart Release Action 사용 방법을 설명한다. Chart Releaser Action is a GitHub Action workflow to turn a GitHub project into a self-hosted Helm chart repo, using helm/chart-releaser CLI tool.

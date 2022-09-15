@@ -1,9 +1,11 @@
 helm은 chart라고 부르는 패키징 포맷을 사용한다. chart는 관련 k8s resource들을 설명하는 파일 집합이다.
 
-chart는 고유한 파일/디렉토리 구조를 갖는 디렉토리다. 디렉토리는 배포 버전이 지정된 아카이브로 패키징될 수 있다.
+chart는 고유한 파일/디렉토리 구조를 갖는 디렉토리다. 디렉토리는 배포 버전이 지정된 아카이브(*.tgz)로 패키징될 수 있다.
+
+chart 배포 없이 다운로드만 원할 경우 `helm pull` 명령어를 사용하면 된다.
 
 ## The Chart File Structure
-chart는 디렉토리내 파일의 집합으로 관리된다. 디렉토리 이름은 버전 정보가 없는 chart의 이름이다. 아래는 디렉토리 구조다.
+chart는 디렉토리내 파일의 집합으로 관리된다. 디렉토리 이름은 버전 정보가 없는 chart의 이름이다. 아래는 workdress chart의 디렉토리 구조 예시다:
 
 ``` bash
 wordpress/
@@ -19,8 +21,11 @@ wordpress/
   templates/NOTES.txt # OPTIONAL: A plain text file containing short usage notes
 ```
 
+Helm reserves use of the charts/, crds/, and templates/ directories, and of the listed file names. Other files will be left as they are.
+
 ## The Chart.yaml File
-`Chart.yml`는 필수 파일이다.
+`Chart.yml`는 필수 파일이며 아래 필드를 갖는다:
+
 ``` yaml
 apiVersion: The chart API version (required)
 name: The name of the chart (required)
@@ -61,8 +66,10 @@ v3.3.2 버전부터 추가 필드는 허용되지 않는다. 이를 위해 권�
 
 예를들어 Version: 1.2.3 필드를 갖는 nginx chart는 `nginx-1.2.3.tgz` 이름을 갖는다.
 
+Chart.yaml 파일 내 version 필드는 CLI를 포함한 많은 helm 도구에서 사용한다. 패키지를 생성할 때 `helm package` 명령어는 Chart.yaml파일에서 찾은 버전을 패키지 이름의 토큰으로 사용한다. 시스템은 chart 패키지 이름 내 버전이 Chart.yaml 파일 내 버전과 일치한다고 가정하며 이를 충족하지 못할 경우 오류가 발생한다.
+
 ### The `apiVersion` Field
-Helm 3부터 apiVersion 필드는 v2 값을 사용해야 한다.
+helm 3부터 apiVersion 필드는 v2 값을 사용해야 한다.
 
 ### The `appVersion` Field
 appVersion과 version 필드는 연관이 없다. 이는 애플리케이션의 버전을 나타낸다. 이 필드는 문자열로 인식하기 위해 quote하는 것을 권장한다.
@@ -70,7 +77,7 @@ appVersion과 version 필드는 연관이 없다. 이는 애플리케이션의 �
 As of Helm v3.5.0, `helm create` wraps the default appVersion field in quotes.
 
 ### The `kubeVersion` Field
-kubeVersion 필드는 지원되는 k8s 버전에 대한 제약 조건을 정의한다. Helm은 chart를 설치할 때 해당 제약 조건의 유효성을 검사하고 cluster가 지원하지 않는 k8s을 사용하는 경우 실패한다.
+kubeVersion 옵션 필드는 지원되는 k8s 버전에 대한 제약 조건을 정의한다. helm은 chart install 시 해당 제약 조건의 유효성을 검사하고 cluster가 지원하지 않는 k8s을 사용하는 경우 실패한다.
 
 `공백`은 AND 연션자, `||`은 OR 연산자를 의미한다. `=`, `!=`, `>`, `<`, `>=`, `<=` 연션자도 지원한다. 뿐만 아니라 아래와 같은 연산자도 지원한다
 
@@ -85,14 +92,14 @@ chart repo를 통해 chart를 관리할 때 deprecate 표시가 필요할 수 �
 ### Chart Types
 type 필드는 chart 타입을 나타낸다. `application`, `library` 값이 있다. application은 기본 값으로 resource 오브젝트를 포함하는 설치 가능한 chart다. 반면 library는 chart builder를 위한 유틸리티 또는 기능을 제공한다. library chart는 설치가 불가하며 일반적으로 resource 오브젝트를 포함하지 않는다는 점에서 application chart와 다르다.
 
-Note: application chart는 library chart로 사용할 수 있다. type을 library로 설정하면된다. 그러면 chart가 모든 유틸리티와 기능을 활용할 수 있는 library chart로 렌더링된다. chart의 모든 resource 객체는 렌더링되지 않는다.
+**Note**: application chart는 library chart로 사용할 수 있다. type을 library로 설정하면된다. 그러면 chart가 모든 유틸리티와 기능을 활용할 수 있는 library chart로 렌더링된다. chart의 모든 resource 객체는 렌더링되지 않는다.
 
 ## Chart LICENSE, README and NOTES
 chart는 설치, 설정, 사용, 라이센스를 설명하는 파일도 포함한다.
 
 LICENSE: chart의 license를 포함하는 일반 텍스트 파일이다. 
 
-README: Markdown 포맷(README.md)을 사용해야 한다. 일반적으로 아래 내용을 포함한다.
+README.md: Markdown 포맷(README.md)을 사용해야 한다. 일반적으로 아래 내용을 포함한다.
 
 - chart가 제공하는 애플리케이션, 서비스에 대한 설명
 - chart를 실행하기 위해 필요한 사항
@@ -104,6 +111,37 @@ artifacthub와 같은 사용자 인터페이스 환경에서 chart에 대한 세
 templates/NOTES.txt: chart 설치, release의 상태 조회 시 출력되는 정보를 포함하는 파일. 이 파일은 template으로 간주된다. 보통 사용 참고 사항, 다음 단계, 기타정보를 표시하는 데 사용될 수 있다. 예를 들어 DB 연결, 웹 UI 접근에 대한 방법을 제공할 수 있다. 이 파일은 `helm install`, `helm status` 실행 시 표준 출력(STDOUT)으로 출력된다. 간략한 내용을 포함하면서 자세한 내용은 README에 포함하는 것을 권장한다.
 
 ## Chart Dependencies
+chart는 다른 여러 chart에 의존성을 가질 수 있다. 이러한 의존성은 Chart.yaml 파일내 dependencies 필드를 통해 동적으로 구성하거나, charts/ 디렉토리에 수동으로 관리할 수 있다.
+
+### Managing Dependencies with the dependencies field
+현재 chart에서 필요로하는 의존성 있는 chart는 dependencies 필드에 정의된다.
+
+``` yaml
+dependencies:
+  - name: apache
+    version: 1.2.3
+    repository: https://example.com/charts
+  - name: mysql
+    version: 3.2.1
+    repository: https://another.example.com/charts
+```
+
+- name: chart 이름
+- version: chart 버전
+- repository: chart repo 주소. 이 repo 역시 `helm repo add` 명령어를 사용해 추가해야 한다. 주소 대신 이름을 사용할 수도 있다.
+
+``` bash
+helm repo add fantastic-charts https://fantastic-charts.storage.googleapis.com
+```
+
+``` yaml
+dependencies:
+  - name: awesomeness
+    version: 1.0.0
+    repository: "@fantastic-charts"
+```
+
+`helm dependency update` 명령어를 사용하면 정의된 chart를 charts/ 디렉토리에 패키지로 다운로드 한다.
 
 ## Templates and Values
 

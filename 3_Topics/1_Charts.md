@@ -111,7 +111,7 @@ artifacthub와 같은 사용자 인터페이스 환경에서 chart에 대한 세
 templates/NOTES.txt: chart 설치, release의 상태 조회 시 출력되는 정보를 포함하는 파일. 이 파일은 template으로 간주된다. 보통 사용 참고 사항, 다음 단계, 기타정보를 표시하는 데 사용될 수 있다. 예를 들어 DB 연결, 웹 UI 접근에 대한 방법을 제공할 수 있다. 이 파일은 `helm install`, `helm status` 실행 시 표준 출력(STDOUT)으로 출력된다. 간략한 내용을 포함하면서 자세한 내용은 README에 포함하는 것을 권장한다.
 
 ## Chart Dependencies
-chart는 다른 여러 chart에 의존성을 가질 수 있다. 이러한 의존성은 Chart.yaml 파일내 dependencies 필드를 통해 동적으로 구성하거나, charts/ 디렉토리에 수동으로 관리할 수 있다.
+chart는 다른 여러 chart를 포함할 수 있다. 이러한 의존성은 Chart.yaml 파일내 dependencies 필드를 통해 동적으로 구성하거나, charts/ 디렉토리에 수동으로 관리할 수 있다.
 
 ### Managing Dependencies with the dependencies field
 현재 chart에서 필요로하는 의존성 있는 chart는 dependencies 필드에 정의된다.
@@ -142,6 +142,92 @@ dependencies:
 ```
 
 `helm dependency update` 명령어를 사용하면 정의된 chart를 charts/ 디렉토리에 패키지로 다운로드 한다.
+
+### Alias field in dependencies
+alias 옵션 필드를 통해 별칭을 추가하면 해당 chart의 별칭을 이름으로 사용한다.
+
+``` yaml
+# parentchart/Chart.yaml
+
+dependencies:
+  - name: subchart
+    repository: http://localhost:10191
+    version: 0.1.0
+    alias: new-subchart-1
+  - name: subchart
+    repository: http://localhost:10191
+    version: 0.1.0
+    alias: new-subchart-2
+  - name: subchart
+    repository: http://localhost:10191
+    version: 0.1.0
+```
+
+위 예시에서 parentchart는 3개의 종속 chart를 갖는다:
+
+``` yaml
+subchart
+new-subchart-1
+new-subchart-2
+```
+
+위의 동작을 직접 수행하기 위해서는 동일한 chart에 대해 다른 디렉토리의 이름을 사용해 chart/ 디렉토리에 위치시킨다.
+
+### Tags and Condition fields in dependencies
+tags, condition 옵션 필드를 사용해 종속 chart의 활성화 여부를 선택할 수 있다.
+
+- condition: 콤마로 구분되는 1개 이상의 YAML 경로. 최상위 부모의 변수에 해당 경로가 존재하면 boolean 값으로 해석 및 활성화/비활성화 여부를 판단한다. 목록 중 유효한 첫 번째 경로가 평가되고, 경로가 존재하지 않으면 아무 영향이 없다.
+
+- tags: 최상위 부모 변수에서 모든 종속 chart의 tags 값을 사용(boolean)해 해당 chart를 활성화/비활성화 할 수 있다.
+
+``` yaml
+# parentchart/Chart.yaml
+
+dependencies:
+  - name: subchart1
+    repository: http://localhost:10191
+    version: 0.1.0
+    condition: subchart1.enabled,global.subchart1.enabled
+    tags:
+      - front-end
+      - subchart1
+  - name: subchart2
+    repository: http://localhost:10191
+    version: 0.1.0
+    condition: subchart2.enabled,global.subchart2.enabled
+    tags:
+      - back-end
+      - subchart2
+```
+
+``` yaml
+# parentchart/values.yaml
+
+subchart1:
+  enabled: true
+tags:
+  front-end: false
+  back-end: true
+```
+
+subchart1의 경우 front-end tag가 false이지만 subchart.enalbed가 true이기 때문에 활성화된다.
+
+sybchart2의 경우 모든 condition의 경로가 존재하지 않기 때문에 영향력이 없으며,. back-end tag가 true이기 때문에 활성화된다.
+
+#### Using the CLI with Tags and Conditions
+--set flag를 통해 tag, condition 값을 변경할 수 있다.
+
+``` bash
+helm install --set tags.front-end=true --set subchart2.enabled=false
+```
+
+#### Tags and Condition Resolution
+- condition은 설정된 값이 유효할 경우 tag보다 우선순위가 높다. 존재하는 첫 번째 condition 경로가 우선이고 뒤의 condition은 무시된다.
+- tag는 chart의 tag가 true이면 chart를 활성화한다.
+- tag, condition은 최상위 부모 value에 설정돼야 한다.
+- tags: 최상위에 정의돼야 한다. 현재 global, 내장 tags:는 지원하지 않는다.
+
+### Importing Child Values via dependencies
 
 ## Templates and Values
 

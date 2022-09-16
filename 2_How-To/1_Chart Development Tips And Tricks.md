@@ -33,7 +33,7 @@ Go는 내장 `template` 지시자를 사용해 template에 다른 template을 �
 template을 포함하고 추가 동작을 수행하기 위해 helm은 특별한 `include` 함수를 제공한다.
 
 ## Using the 'required' function
-`required`함수를 사용해 template 렌더링 시 변수 값을 필수로 선언할 수 있다. 해당 변수 값이 values.yml에서 빈 값이라면 template은 렌더링하지 않고 에러 메시지를 반환한다.
+`required` 함수를 사용해 template 렌더링 시 변수 값을 필수로 선언할 수 있다. 해당 변수 값이 values.yml에서 빈 값이라면 template은 렌더링하지 않고 에러 메시지를 반환한다.
 
 ``` yaml
 {{ required "A valid foo is required!" .Values.foo }}

@@ -121,7 +121,7 @@ spec:
 [...]
 ```
 
-**Note***: 이를 library chart에 추가할 경우 `$. Template.BasePath`를 이용해 원하는 파일에 접근하지 못할 수 있다. 이 때 대신 `{{ include ("mylibchart.configmap") . | sha256sum }}`를 사용한다.
+**Note**: 이를 library chart에 추가할 경우 `$. Template.BasePath`를 이용해 원하는 파일에 접근하지 못할 수 있다. 이 때 대신 `{{ include ("mylibchart.configmap") . | sha256sum }}`를 사용한다.
 
 항상 deploy를 rolling하기 위해서는 위와 유사하게 annotation을 사용할 수 있다:
 

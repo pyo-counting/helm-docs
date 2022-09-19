@@ -97,9 +97,9 @@ type 필드는 chart 타입을 나타낸다. `application`, `library` 값이 있
 ## Chart LICENSE, README and NOTES
 chart는 설치, 설정, 사용, 라이센스를 설명하는 파일도 포함한다.
 
-LICENSE: chart의 license를 포함하는 일반 텍스트 파일이다. 
+**LICENSE**: chart의 license를 포함하는 일반 텍스트 파일이다. 
 
-README.md: Markdown 포맷(README.md)을 사용해야 한다. 일반적으로 아래 내용을 포함한다.
+**README.md**: Markdown 포맷(README.md)을 사용해야 한다. 일반적으로 아래 내용을 포함한다.
 
 - chart가 제공하는 애플리케이션, 서비스에 대한 설명
 - chart를 실행하기 위해 필요한 사항
@@ -108,7 +108,7 @@ README.md: Markdown 포맷(README.md)을 사용해야 한다. 일반적으로 �
 
 artifacthub와 같은 사용자 인터페이스 환경에서 chart에 대한 세부 사항은 READMD.md 내용을 보여준다.
 
-templates/NOTES.txt: chart 설치, release의 상태 조회 시 출력되는 정보를 포함하는 파일. 이 파일은 template으로 간주된다. 보통 사용 참고 사항, 다음 단계, 기타정보를 표시하는 데 사용될 수 있다. 예를 들어 DB 연결, 웹 UI 접근에 대한 방법을 제공할 수 있다. 이 파일은 `helm install`, `helm status` 실행 시 표준 출력(STDOUT)으로 출력된다. 간략한 내용을 포함하면서 자세한 내용은 README에 포함하는 것을 권장한다.
+**templates/NOTES.txt**: chart 설치, release의 상태 조회 시 출력되는 정보를 포함하는 파일. 이 파일은 template으로 간주된다. 보통 사용 참고 사항, 다음 단계, 기타정보를 표시하는 데 사용될 수 있다. 예를 들어 DB 연결, 웹 UI 접근에 대한 방법을 제공할 수 있다. 이 파일은 `helm install`, `helm status` 실행 시 표준 출력(STDOUT)으로 출력된다. 간략한 내용을 포함하면서 자세한 내용은 README에 포함하는 것을 권장한다.
 
 ## Chart Dependencies
 chart는 다른 여러 chart를 포함할 수 있다. 이러한 의존성은 Chart.yaml 파일내 dependencies 필드를 통해 동적으로 구성하거나, charts/ 디렉토리에 수동으로 관리할 수 있다.

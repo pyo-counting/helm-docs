@@ -7,7 +7,7 @@
 - template 파일 이름은 resource의 종류를 파악할 수 있도록 해야 한다. 예를 들어 foo-pod.yaml, bar-svc.yaml
 
 ## Names of Defined Templates
-defined template( {{ define }}을 이용해 생성된 template)은 전역적으로 접근 가능하다. 즉, chart와 모든 sub-chart에서 접근이 가능하다.
+defined template( `{{ define }}`을 이용해 생성된 template)은 전역적으로 접근 가능하다. 즉, chart와 모든 sub-chart에서 접근이 가능하다.
 
 이러한 이유로 모든 defined template 이름은 네임스페이스를 갖도록 해야 한다.
 

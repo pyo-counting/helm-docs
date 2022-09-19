@@ -12,7 +12,7 @@ aws-cluster-autoscaler
 대문자, underscore(_)도 chart 이름에 사용할 수 있지만 권장 사항은 아니다.
 
 ## Version Numbers
-helm은 가능한 경우 SemVer 2를 사용해 버전 번호를 사용한다. (docker image tag는 반드시 SemVer를 따를 필요는 없으므로 규칙에 대한 예외로 간주된다.)
+helm은 가능한 경우 SemVer 2를 사용해 버전 번호를 사용한다(docker image tag는 반드시 SemVer를 따를 필요는 없으므로 규칙에 대한 예외로 간주된다).
 
 SemVer 버전이 k8s label에 저장될 때 label은 + 기호를 값으로 허용하지 않기 때문에 일반적으로 + 문자를 _ 문자로 변경한다.
 

@@ -26,3 +26,15 @@ helm hook은 항상 annotation이다.
 |app.kubernetes.io/part-of      |OPT   |여러 chart 또는 소프트웨어 구성요소를 같이 사용해 하나의 애플리케이션을 만드는 경우. 예를 들어 웹 사이트를 생성하기 위한 애플리케이션 소프트웨어 및 db. 지원되는 최상위 애플리케이션으로 설정할 수 있다.|
 
 k8s 문서에서 app.kubernetes.io로 시작하는 k8s 관련 label을 확인할 수 있다.
+
+helm을 이용해 chart 배포 시, 자동 추가되는 annotation, label은 아래와 같다.
+
+- annotation
+    - meta.helm.sh/release-name: {{ .Release.Name }}
+    - meta.helm.sh/release-namespace: {{ .Release.Namespace }}
+- label
+    - app.kuberenetes.io/managed-by: {{ .Release.Service }}
+
+추가적으로 helm은 chart release에 대한 버전 관리를 위해 배포 ns 내에 .spec.type=helm.sh/release.v{{ .Release.Revision }}인 secret을 생성하는 것을 확인할 수 있었다. secret의 이름은 다음과 같다.
+
+- sh.helm.release.v2.{{ .Release.Name }}.v{{ .Release.Revision }}

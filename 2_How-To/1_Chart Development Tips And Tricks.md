@@ -17,7 +17,7 @@ name: {{ .Values.MyName | quote }}
 
 정수 값을 사용할 때는 quoting하지 않는 것이 좋다. 그렇지 않을 경우 대부분의 경우 k8s에서 파싱 에러를 야기한다.
 
-This remark does not apply to env variables values which are expected to be string, even if they represent integers:
+이는 숫자로 표현되더라도 문자열로 예상되는 환경 변수에 대해서는 적용되진 않는다:
 
 ``` yaml
 env:

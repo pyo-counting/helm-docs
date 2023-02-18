@@ -85,7 +85,7 @@ helm은 종료되기 전에 모든 resource가 실행되기까지 기다리지 �
 - URL (`helm install foo https://example.com/charts/foo-1.2.3.tgz`)
 
 ## `'helm upgrade'` and `'helm rollback'`: Upgrading a Release, and Recovering on Failure
-`helm rollback [RELEASE] [REVISION` 명령어를 사용해 이전 release로 롤백할 수 있다.
+`helm rollback [RELEASE] [REVISION]` 명령어를 사용해 이전 release로 롤백할 수 있다.
 
 설치, 업그레이드, 롤백 시 revision 숫자는 1씩 증가한다. 첫 번째 revision 숫자는 항상 1이다. `helm history [RELEASE]` 명령어를 사용해 특정 revision을 조회할 수 있다.
 
@@ -93,7 +93,9 @@ helm은 종료되기 전에 모든 resource가 실행되기까지 기다리지 �
 설치, 업그레이드, 롤백에 대한 helm의 동작을 커스터마이징하기 위해 아래 옵션을 사용할 수 있다.
 
 - --timeout: k8s 명령어가 완료될 때까지 기다리는 시간. 기본 값은 5m0s(Go duration 형식)
-- --wait: 
+- --wait: release가 성공으로 표시하기 위해 모든 po가 ready state, pvc가 바운딩, deploy가 최소 po 개수를 만족(desired - maxUnavailable), svc가 IP를 보유(그리고 loadbalancer일 경우 ingress도 보유)할 때까지 기다린다. 이는 --timeout 값까지 기다린다. timeout에 도달하면 release는 FAILED로 표시된다.
+
+    **Note**: deploy의 rolling update 전략에 대해 replicas가 1, maxUnavailable이 0으로 설정되지 않을 경우, --wait은 ready 상태의 최소 po를 충족하면 바로 반환된다.
 - --no-hooks: 명령어에 대한 hook 실행을 건너뛴다.
 - --recreate-pods(upgrade, rollback 명령어에만 유효): This flag will cause all pods to be recreated (with the exception of pods belonging to deployments). DEPRECATED in Helm 3
 

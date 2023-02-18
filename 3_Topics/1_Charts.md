@@ -228,6 +228,25 @@ helm install --set tags.front-end=true --set subchart2.enabled=false
 - tags: 최상위에 정의돼야 한다. 현재 global, 내장 tags:는 지원하지 않는다.
 
 ### Importing Child Values via dependencies
+경우에 따라 하위 chart의 변수를 상위 chart로 전파해 공통 기본값으로 사용할 수도 있다.
+
+export 포맷을 사용하는 것에 대한 추가 이점은 it will enable future tooling to introspect user-settable values.
+
+부모 chart의 Chart.yaml 파일의 dependencies\[*\].import-values 필드에 하위 chart의 변수를 나열할 수 있다.
+
+export에 포함되지 않은 값을 가져오기 위해서는 child-parent 포맷을 사용한다. 두 형식에 대해 아래에서 설명한다.
+
+#### Using the exports format
+
+#### Using the child-parent format
+
+### Managing Dependencies manually via the charts/ directory
+종속성에 대한 더 많은 제어가 필요한 경우 chart/ 디렉토리에 해당 chart를 복사해 직접 제어하면 된다. 해당 디렉토리의 경우 unpacked chart가 포함되어야 하며 이름은 _, ..로 시작할 수 없다. 이러한 파일은 chart loader에 의해 무시된다.
+
+### Operational aspects of using dependencies
+위에서는 chart의 종속성에 대해 설명했다. 이러한 종속성은 helm install, helmm upgrade 명령어에 어떤 영향을 미칠까?
+
+
 
 ## Templates and Values
 

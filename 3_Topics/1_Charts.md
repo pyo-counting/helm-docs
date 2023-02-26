@@ -106,7 +106,7 @@ chart는 설치, 설정, 사용, 라이센스를 설명하는 파일도 포함�
 - values.yaml과 기본 값에 대한 설명
 - chart의 설치, 설정과 관련된 다른 정보
 
-artifacthub와 같은 사용자 인터페이스 환경에서 chart에 대한 세부 사항은 READMD.md 내용을 보여준다.
+ArtifactHub와 같은 사용자 인터페이스 환경에서 chart에 대한 세부 사항은 README.md 내용을 보여준다.
 
 **templates/NOTES.txt**: chart 설치, release의 상태 조회 시 출력되는 정보를 포함하는 파일. 이 파일은 template으로 간주된다. 보통 사용 참고 사항, 다음 단계, 기타정보를 표시하는 데 사용될 수 있다. 예를 들어 DB 연결, 웹 UI 접근에 대한 방법을 제공할 수 있다. 이 파일은 `helm install`, `helm status` 실행 시 표준 출력(STDOUT)으로 출력된다. 간략한 내용을 포함하면서 자세한 내용은 README에 포함하는 것을 권장한다.
 
@@ -232,31 +232,263 @@ helm install --set tags.front-end=true --set subchart2.enabled=false
 
 export 포맷을 사용하는 것에 대한 추가 이점은 it will enable future tooling to introspect user-settable values.
 
-부모 chart의 Chart.yaml 파일의 dependencies\[*\].import-values 필드에 하위 chart의 변수를 나열할 수 있다.
+부모 chart의 Chart.yaml 파일의 dependencies\[*\].import-values 필드에 하위 chart의 exports 필드의 변수를 나열할 수 있다.
 
-export에 포함되지 않은 값을 가져오기 위해서는 child-parent 포맷을 사용한다. 두 형식에 대해 아래에서 설명한다.
+하위 chart의 exports에 포함되지 않은 값을 가져오기 위해서는 child-parent 포맷을 사용한다. 두 형식에 대해 아래에서 설명한다.
 
 #### Using the exports format
+하위 chart의 values.yaml 파일의 최상위 루트에 exports 필드를 포함하는 경우, 아래와 같이 상위 chart에서 import할 key를 명시함으로써 하위 chart의 변수를 가져올 수 있다. 아래는 예시다:
+
+``` yaml
+# parent's Chart.yaml file
+dependencies:
+  - name: subchart
+    repository: http://localhost:10191
+    version: 0.1.0
+    import-values:
+      - data
+
+# child's values.yaml file
+exports:
+  data:
+    myint: 99
+```
+
+dependencies\[*\].import-values 목록에 data key 값을 명시했기 때문에 하위 chart의 exports 필드 목록 중 data key에 포함된 값을 가져온다. 최종적으로 상위 chart에서는 아래와 같이 변수가 포함된다:
+
+``` yaml
+# parent's values
+
+myint: 99
+```
+
+상위 chart의 dependencies\[*\].import-values에서 명시한 data라는 key를 가진 필드의 내용을 가져오기 때문에 실제 key인 data는 가져오지 않음을 주의해야 한다,
 
 #### Using the child-parent format
+하위 chart의 exports 필드에 포함되지 않은 변수를 상위 chart에서 import하기 위해 하위 chart에서 가져올 데이터의 경로와, 상위 chart에서 가져온 데이터의 경로를 모두 명시해야 한다. 아래는 import를 수행하기 전 상위, 하위 chart의 values를 보여준다:
+``` yaml
+# parent's values.yaml file
+myimports:
+  myint: 0
+  mybool: false
+  mystring: "helm rocks!"
+
+# subchart1's values.yaml file
+default:
+  data:
+    myint: 999
+    mybool: true
+  ```
+
+상위 chart에서 import-values 필드에 아래와 같이 설정할 경우:
+``` yaml
+# parent's Chart.yaml file
+dependencies:
+  - name: subchart1
+    repository: http://localhost:10191
+    version: 0.1.0
+    ...
+    import-values:
+      - child: default.data
+        parent: myimports
+```
+
+결과는 다음과 같다:
+``` yaml
+# parent's final values
+myimports:
+  myint: 999
+  mybool: true
+  mystring: "helm rocks!"
+```
+
 
 ### Managing Dependencies manually via the charts/ directory
-종속성에 대한 더 많은 제어가 필요한 경우 chart/ 디렉토리에 해당 chart를 복사해 직접 제어하면 된다. 해당 디렉토리의 경우 unpacked chart가 포함되어야 하며 이름은 _, ..로 시작할 수 없다. 이러한 파일은 chart loader에 의해 무시된다.
+종속성에 대한 더 많은 제어가 필요한 경우 chart/ 디렉토리에 해당 chart를 복사해 직접 제어하면 된다. 해당 디렉토리의 경우 unpacked chart가 포함되어야 하며 이름은 _, .로 시작할 수 없다. 이러한 파일은 chart loader에 의해 무시된다.
 
 ### Operational aspects of using dependencies
 위에서는 chart의 종속성에 대해 설명했다. 이러한 종속성은 helm install, helmm upgrade 명령어에 어떤 영향을 미칠까?
 
+helm은 chart를 install, upgrade 할 때 해당 chart와 모든 종속성이 있는 chart에 대해:
 
+1. 단일 chart인 것처럼 모두 집계한다.
+2. resource 타입 -> 이름 우선 순위로 정렬한다.
+3. 위 순서로 create, update를 수행한다.
 
 ## Templates and Values
+모든 template 파일은 chart의 templates/ 폴더 아래에 있는 것으로 간주한다. helm이 chart를 렌더링할 때 template engine에 해당 폴더 내 template을 모두 전달한다.
+
+### Template Files
+
+### Predefined Values
+values.yaml 파일 또는 --set flag를 통해 전달되는 변수는 teomplatd에서 .Values 객체를 통해 접근이 가능하다. 물론 template에서 사용 가능한 predefined 변수도 있다.
+
+아래는 predefined 변수로 덮어쓰기가 불가능하다.
+
+- Release.Name: The name of the release (not the chart)
+- Release.Namespace: The namespace the chart was released to.
+- Release.Service: The service that conducted the release.
+- Release.IsUpgrade: This is set to true if the current operation is an upgrade or rollback.
+- Release.IsInstall: This is set to true if the current operation is an install.
+- Chart: The contents of the Chart.yaml. Thus, the chart version is obtainable as Chart.Version and the maintainers are in Chart.Maintainers.
+- Files: A map-like object containing all non-special files in the chart. This will not give you access to templates, but will give you access to additional files that are present (unless they are excluded using .helmignore). Files can be accessed using {{ index .Files "file.name" }} or using the {{.Files.Get name }} function. You can also access the contents of the file as []byte using {{ .Files.GetBytes }}
+- Capabilities: A map-like object that contains information about the versions of Kubernetes ({{ .Capabilities.KubeVersion }}) and the supported Kubernetes API versions ({{ .Capabilities.APIVersions.Has "batch/v1" }})
+
+
+**Note**: 정의되지 않은 부적절한 Chart.yaml 내 필드는 무시된다. 그렇기 때문에 Chart 객체 내에서도 접근이 불가하다.
+
+### Values files
+--set, --values(-f) flag를 통해 전달된 변수 및 파일은 기본 chart에 포함된 values.yml 파일과 병합된다. chart의 기본 변수 파일인 values.yaml 파일이 버려지는 것이 아님에 주의해야 한다.
+
+### Scope, Dependencies, and Values
+최상위 chart에 사용되는 values.yaml 파일에는 charts/ 디렉토리에 포함된 sub chart에 변수도 정의할 수 있다. 아래 예시는 mysql, apache 종속성을 갖는 WordPress chart의 변수 파일이다:
+
+``` yaml
+title: "My WordPress Site" # Sent to the WordPress template
+
+mysql:
+  max_connections: 100 # Sent to MySQL
+  password: "secret"
+
+apache:
+  port: 8080 # Passed to Apache
+```
+
+최상위 chart에서는 하위 chart의 변수에 접근할 수 있다(예를 들어 .Values.mysql.password). 하지만 반대로 하위 chart에서는 상위 chart의 변수에 접근할 수 없다. 뿐만 아니라 apache chart에도 접근할 수 없다. 하위 chart에서 변수를 사용하기 위해 .Values.mysql.password가 아닌 .Values.password와 같이 사용한다(namespace가 삭제된다).
+
+### Global Values
+2.0.0-Alpha.2부터 Helm은 global 변수를 지원한다.
+
+``` yaml
+title: "My WordPress Site" # Sent to the WordPress template
+
+global:
+  app: MyWordPress
+
+mysql:
+  max_connections: 100 # Sent to MySQL
+  password: "secret"
+
+apache:
+  port: 8080 # Passed to Apache
+```
+
+모든 chart에서 .Values.global.app의 형태를 통해 global 변수를 사용할 수 있다. 이는 변수 파일이 다음과 같이 다시 생성된다고 이해하면 된다:
+
+``` yaml
+title: "My WordPress Site" # Sent to the WordPress template
+
+global:
+  app: MyWordPress
+
+mysql:
+  global:
+    app: MyWordPress
+  max_connections: 100 # Sent to MySQL
+  password: "secret"
+
+apache:
+  global:
+    app: MyWordPress
+  port: 8080 # Passed to Apache
+```
+
+하위 chart에서 global 변수를 정의하는 경우에는 해당 하위 chart의 하위 chart에 global 변수가 공유되지만 상위 chart로는 공유되지 않는다. 하위 chart가 상위 chart에 영향을 줄 수 있는 방법은 없다. 뿐만 아니라 상위 chart의 global 변수가 하위 chart의 것보다 우선 순위가 높다.
+
+### Schema Files
+때때로 chart 작성자는 변수에 대한 구조를 정의하고자 한다. 이는 values.schema.josn 파일을 통해 가능하다. schema 파일은 변수에 대한 유효성 검사에 사용된다. 유효성 검사는 아래 명령어에서 수행된다:
+
+- helm install
+- helm upgrade
+- helm lint
+- helm template
+
+schema는 values.yaml 파일이 아닌 최종 .Values 객체에 적용된다는 점을 유의해야 한다.
+
+Furthermore, the final .Values object is checked against all subchart schemas. This means that restrictions on a subchart can't be circumvented by a parent chart. This also works backwards - if a subchart has a requirement that is not met in the subchart's values.yaml file, the parent chart must satisfy those restrictions in order to be valid.
+
+### References
+- Go templates
+- Extra template functions
+- The YAML format
+- JSON Schema
 
 ## Custom Resource Definitions (CRDs)
+k8s는 새로운 k8s object 타입을 정의할 수 있는 기능을 제공한다. CRD를 사용함으로써 k8s 개발자는 새로운 resource 타입을 명시할 수 있다.
 
+Helm 3부터 CRD는 특별한 object 종류로 다뤄진다. helm install 시 가장 먼저 설치되며, 몇 가지 제약 사항이 있다.
+
+CRD yaml 파일은 crds/ 디렉터리에 정의되어야 한다. 여러 CRD는 동일한 파일에 위치해야 한다. helm은 CRD 디렉터리의 모든 파일을 k8s에 로드한다.
+
+CRD 파일은 template을 사용할 수 없으며 모두 평범한 yaml 파일이어야 한다.
+
+helm이 새로운 chart를 설치할 때 k8s API server에 CRD를 로드하고 이용가능할 때까지 기다린다. 그리고 나서 나머지 chart를 렌더링하기 위해 template engine을 실행 및 k8s에 로드한다. 이러한 순서 보장 덕분에 Helm template에서 .Capabilities object를 통해 CRD 정보를 사용할 수 있으며, CRD를 통해 정의된 k8s resource 타입의 객체를 생성할 수 있다.
+
+예를 들어, crds/ 디렉토리에 CronTab이라는 새로운 CRD를 생성하고, template 디렉터리에서 CRD에 대한 새로운 k8s reousrce 타입의 객체를 생성하는 경우:
+```
+crontabs/
+  Chart.yaml
+  crds/
+    crontab.yaml
+  templates/
+    mycrontab.yaml
+
+```
+
+crontab.yaml 파일은 tempalte이 포함되지 않은 CRD 정의를 포함해야 한다:
+``` yaml
+kind: CustomResourceDefinition
+metadata:
+  name: crontabs.stable.example.com
+spec:
+  group: stable.example.com
+  versions:
+    - name: v1
+      served: true
+      storage: true
+  scope: Namespaced
+  names:
+    plural: crontabs
+    singular: crontab
+    kind: CronTab
+```
+
+그리고 mycrontab.yaml template 파일은 새로운 CronTab 객체를 생성한다:
+``` yaml
+apiVersion: stable.example.com
+kind: CronTab
+metadata:
+  name: {{ .Values.name }}
+spec:
+   # ...
+```
+
+helm은 template/ 디렉토리 내의 CRD를 먼저 k8s API server에 업로드함으로써 templates/ 디렉터리에 정의된 CronTab resource에 대한 생성을 보장한다.
+
+### Limitations on CRDs
+k8s의 object와 다르게 CRD는 global 설치된다. 이러한 이유로 CRD에 대한 관리 시 유의해야 하며 몇 가지 제약 사항도 있다:
+
+- CRD는 재설치되지 않는다. 만약 crds/ 디렉터리의 CRD가 버전과 관계 없이 이미 존재하는 경우 Helm은 설치 / 업그레이드를 수행하지 않는다.
+- CRD는 upgrace, rollback 시 설치되지 않는다. Helm은 install 시에만 CRD를 생성한다.
+- CRD는 절대 삭제되지 않는다. CRD에 대한 삭제는 k8s 클러스터 내 CRD로 정의된 reosurce의 삭제이다. 그렇기 때문에 helm은 CRD를 삭제하지 않는다.
 ## Using Helm to Manage Charts
 
 ## Chart Repositories
+chart repository는 패키지된 chart를 저장 및 제공하는 HTTP 서버다. helm 명령어는 로컬 chart 디렉토리를 관리하는 데 사용되기 때문에 chart에 대한 공유는 chart repository를 사용하는 것을 권장한다.
+
+YAML, tar 파일을 제공하며 GET method에 대한 요청을 처리할 수 있는 HTTP 서버는 repository server로 사용이 가능하다. website 모드가 활성화된 GCS, S3에 대해 helm 팀에서 확인을 완료했다.
+
 repo는 주로 패키지를 검색하고 확인할 수 있는 메타데이터와 함께 모든 패키지 목록에 대한 index.yml이라는 특수 파일이 있다는 특징이 있다.
 
 클라이언트에서는 `helm repo` 명령어를 통해 관리한다. 하지만 helm은 chart를 원격 서버로 업로드하는 기능을 제공하지 않는다. 그렇게 하면 구현 서버에 상당한 요구 사항이 추가되어 repo 설정에 대한 장벽이 높아지기 때문이다.
 
 ## Chart Starter Packs
+helm create의 --starter flag를 사용해 stater chart를 명시할 수 있다.
+
+stater chart는 일반 chart와 동일하지만 $XDG_DATA_HOME/helm/starters에 위치한다. chart 개발자로서 특별히 디자인된 stater chart를 작성할 수도 있다. 이러한 chart는 아래 내용을 고려해 만들어야 한다:
+
+- Chart.yaml 파일은 생성 시 덮어씌워진다.
+- 사용자는 해당 chart의 내용을 변경할 것이기 때문에 사용자를 위한 가이드가 제공되어야 한다.
+- starter chart를 template로 사용할 수 있도록 모든 \<CHARTNAME\>은 chart의 이름으로 대체된다.
+
+햔재 $XDG_DATA_HOME/helm/starters에 chart를 추가하는 방법은 직접 손으로 하는 수밖에 없다. 

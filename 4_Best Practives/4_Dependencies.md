@@ -21,6 +21,8 @@ Where possible, use https:// repository URLs, followed by http:// URLs.
 
 repo가 repo index file에 추가한 경우 repo 이름을 URL의 별칭으로 사용할 수 있다. alias: 또는 @ + repo 이름 형식으로 사용하면 된다.
 
+파일 URL(file://...)은 고정된 배포 파이프라인으로 구성된 chart의 특수 케이스에 해당한다.
+
 downloader plugin을 사용할 때 URL scheme은 플러그인에 따라 다르다. chart 사용자는 종속성을 업데이트하거나 구축하기 위해 설치된 scheme를 지원하는 플러그인이 있어야 한다.
 
 helm은 dependency의 repository 필드가 공백이면 종속성 관리 작업을 수행하지 못한다. 이 경우 helm은 해당 charts/ 디렉토리에 종속성 chart가 있는 것으로 가정한다.

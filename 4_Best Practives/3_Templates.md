@@ -30,7 +30,7 @@ defined template( `{{ define }}`을 이용해 생성된 template)은 전역적�
 It is highly recommended that new charts are created via helm create command as the template names are automatically defined as per this best practice.
 
 ## Formatting Templates
-template은 공백 문자 2개로 들여쓰기해야 한다.
+template은 공백 문자 2개로 들여쓰기해야 한다(탭이 아닌)).
 
 template 지시자는 여는 괄호 뒤에 공백 문자를 있어야 하며 닫는 괄호 앞에 공백 문자가 있어야 한다.
 
@@ -136,7 +136,7 @@ This is a comment.
 type: frobnitz
 ```
 
-template 주석은 template 기능을 설명해야 한다.
+template 주석은 template 기능을 설명해야 한다:
 
 ``` yaml
 {{- /*
@@ -147,7 +147,7 @@ mychart.shortname provides a 6 char truncated version of the release name.
 {{- end -}}
 ```
 
-template YAML 내에서 주석은 helm 사용자가 디버깅 하는데 도움이 될 수 있도록 사용한다.
+template 내에서 YAML 주석은 helm 사용자가 디버깅 하는데 도움이 될 수 있도록 사용한다.
 
 ``` yaml
 # This may cause problems if the value is more than 100Gi

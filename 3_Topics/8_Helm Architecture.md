@@ -1,5 +1,5 @@
 ## The Purpose of Helm
-helm은 chart라고 불리는 k8s package를 관리하는 도구이다. helm을 통해
+helm은 chart라고 불리는 k8s package를 관리하는 도구이다. helm을 통해:
 
 - 새로운 chart를 생성할 수 있다.
 - chart를 *.tgz 아카이브 파일로 패키지할 수 있다.
@@ -7,7 +7,7 @@ helm은 chart라고 불리는 k8s package를 관리하는 도구이다. helm을 
 - k8s cluster에 chart를 설치, 삭제할 수 있다.
 - helm을 통해 설치된 chart의 릴리즈 사이클을 관리할 수 있다.
 
-helm은 중요한 3가지 개념을 갖는다.
+helm은 중요한 3가지 개념을 갖는다:
 
 1. chart는 k8s 애플리케이션 인스턴스를 생성하기 위해 필요한 정보다.
 2. config는 릴리즈 가능한 객체를 만들기 위한 chart에 병합할 수 있는 설정 정보가 포함된다.
@@ -32,4 +32,6 @@ helm library은 모든 helm 작업을 실행하기 위한 로직를 제공한다
 - k8s와 상호작용함으로써 chart를 업그레이드, 삭제
 
 ## Implementation
+helm client, library는 Go 언어로 작성된다.
+
 library는 k8s client library를 사용해 k8s와 통신한다. Currently, that library uses REST+JSON. It stores information in Secrets located inside of Kubernetes. It does not need its own database.

@@ -1,4 +1,4 @@
-chart manifest에서 RBAC resource를 사용하는 best practice를 설명한디.
+chart manifest에서 RBAC resource를 사용하는 best practice를 설명한다.
 
 RBAC resource는 다음과 같다:
 

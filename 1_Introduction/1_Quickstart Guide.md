@@ -3,7 +3,7 @@
 ## Install Helm
 
 ## Initialize a Helm Chart Repository
-Artifact Hub에서 helm chart를 검색 및 조회할 수 있다. 그리고 해당 helm chart를 설치할 수 있는 repository 주소를 제공한다. 해당 repository를 `helm repo add`명령어로 추가 할 수 있다. 각 repo는 해당 helm chart뿐만 아니라 다른 chart를 포함할 수도 있다.
+Artifact Hub에서 helm chart를 검색 및 조회할 수 있다. 그리고 해당 helm chart를 설치할 수 있는 repository 주소를 제공한다. 해당 repository를 `helm repo add` 명령어로 추가 할 수 있다. 각 repo는 해당 helm chart뿐만 아니라 다른 chart를 포함할 수도 있다.
 
 ## Install an Example Chart
 

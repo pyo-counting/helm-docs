@@ -1,8 +1,18 @@
-Helm 3는 패키지 배포를 위해 OCI를 지원한다. chart 패키지는 OCI-based registry에 저장, 공유 가능하다.
+Helm 3는 패키지 배포를 위해 OCI를 지원하는 container registory를 사용할 수 있다. Helm v3.8.0부터 OCI 지원은 기본적으로 활성화된다.
 
-## Enabling OCI Support
+## OCI support prior to v3.8.0
 
-## Running a registry
+### Enabling OCI support prior to v3.8.0
+
+### OCI feature deprecation and behavior changes with v3.8.0
+
+### OCI feature deprecation and behavior changes with v3.7.0
+
+## Using an OCI-based registry
+
+### Helm repositories in OCI-based registries
+
+### Use hosted registries
 
 ## Commands for working with registries
 ### The `registry` subcommand
@@ -38,3 +48,5 @@ dependencies:
 ```
 
 ## Helm chart manifest
+
+## Migrating from chart repos

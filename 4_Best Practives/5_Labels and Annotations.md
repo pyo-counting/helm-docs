@@ -6,14 +6,14 @@ metadata 중 아래 조건을 만족할 경우 label로 사용해야 한다:
 - k8s가 resource를 식별하는 데 사용된다.
 - It is useful to expose to operators for the purpose of querying the system.
 
-예를 들어, helm.sh/chart: NAME-VERSION label을 사용함으로써 특정 chart의 모든 인스턴스를 편리하게 찾을 수 있다.
+예를 들어, `helm.sh/chart: NAME-VERSION` label을 사용함으로써 특정 chart의 모든 인스턴스를 편리하게 찾을 수 있다.
 
 만약 metadata가 쿼리를 위해 사용되는 것이 아니라면, 이는 annotation으로 사용해야 한다.
 
 helm hook은 항상 annotation이다.
 
 ## Standard Labels
-아래는 helm chart가 사용하는 공통 label이다. helm은 특정 label이 필요하지 않다. REC로 표시된 label은 권장되며 전체적인 일관성을 위해 차트에 배치해야 한다. OPT로 표시된 label은 선택 사항이다. 이들은 관용적이거나 일반적으로 사용되지만 운영 목적으로 자주 사용되지는 않는다.
+아래는 helm chart가 사용하는 공통 label이다. helm은 특정 label에 대해 필수로 설정되어야 하는 것은 아니다. REC로 표시된 label은 권장되며 전체적인 일관성을 위해 chart에 배치해야 한다. OPT로 표시된 label은 선택 사항이다. 이들은 관용적이거나 일반적으로 사용되지만 운영 목적으로 자주 사용되지는 않는다.
 
 |Name                           |Status|Description|
 |-------------------------------|------|-----------|

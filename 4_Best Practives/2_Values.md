@@ -22,7 +22,7 @@ helm의 내장 변수는 사용자 정의 변수와 구분하기 쉽기 위해 �
 ## Flat or Nested Values
 대부분의 경우 중첩보다 flat 구조이 선호된다. 그 이유는 template 개발자와 사용자에게 더 간단하기 때문이다.
 
-안전을 위해 모든 중첩에 대해 변수를 검사해야 한다:
+안전을 위해 모든 ntested value에 대해 검사가 필요하다:
 
 ``` yaml
 {{ if .Values.server }}
@@ -30,18 +30,18 @@ helm의 내장 변수는 사용자 정의 변수와 구분하기 쉽기 위해 �
 {{ end }}
 ```
 
-중첩에 대해 존재 유무를 확인해야 한다. 그러나 flag 구조에서는 이러한 검사가 필요없으므로 template을 더 쉽게 읽고 사용하기 쉽다.
+그러나 flat 구조에서는 이러한 검사가 필요없으므로 template을 더 쉽게 읽고 사용하기 쉽다.
 
 ``` yaml
 {{ default "none" .Values.serverName }}
 ```
 
-관련된 변수가 많고 그 중 하나 이상 옵션이 아닌 경우 가독성을 높이기 위해 중첩을 사용할 수 있다.
+관련된 변수가 많고 그 중 하나 이상 옵션이 아닌 경우 가독성을 높이기 위해 netsted 구조를 사용할 수도 있다.
 
 ## Make Types Clear
 YAML의 형식 강제 변환 규칙은 때때로 직관적이지 않다. 예를 들어 foo: false는 foo: "false"와 다르다. foo: 12345678과 같은 큰 정수는 경우에 따라 scientific notation으로 변환된다.
 
-타입 변환 오류를 피하는 가장 쉬운 방법은 문자열에 대해서는 명시적으로, 다른 모든 것에 대해서는 암시적으로 하는 것이다. 또는 간단하게 모든 문자열을 quoting하면 된다.
+타입 변환 오류를 피하는 가장 쉬운 방법은 문자열에 대해서는 명시적으로, 다른 모든 것에 대해서는 암시적으로 하는 것이다. 간략하게 말하자면 모든 문자열을 quoting하면 된다.
 
 종종 정수 캐스팅 문제를 피하기 위해 정수를 문자열로 저장하고 template에서 {{ int $value }}를 사용해 문자열을 다시 정수로 변환하는 것이 유리할 수 있다.
 
@@ -85,7 +85,7 @@ servers:
 ## Document values.yaml
 values.yaml 파일 내 프로퍼티는 주석이 있어야 한다. 주석은 프로퍼티의 이름으로 시작해야 하며 설명을 위해 최소 한 문장을 포함해야 한다.
 
-올바른 예:
+부적절한 예:
 
 ``` yaml
 # the host name for the webserver
@@ -93,7 +93,7 @@ serverHost: example
 serverPort: 9191
 ```
 
-부적절한 예:
+적절한 예:
 
 ``` yaml
 # serverHost is the host name for the webserver

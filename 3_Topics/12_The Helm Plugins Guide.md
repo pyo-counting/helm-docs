@@ -1,4 +1,4 @@
-helm plugin은 helm CLi를 통해 접그이 가능하지만 기본적으로 제공되는 기능은 아니다.
+helm plugin은 helm CLI를 통해 접근이 가능하지만 기본적으로 제공되는 기능은 아니다.
 
 plugin 목록은 [Related Projects and Documentation](https://helm.sh/docs/community/related/#helm-plugins) 페이지 또는 GitHub에서 직접 검색을 통해 찾을 수 있다.
 

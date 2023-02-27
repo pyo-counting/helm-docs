@@ -1,4 +1,4 @@
-chart 내에서 label, annotation을 사용하시 best practice에 대해 설명한다.
+chart 내에서 label, annotation을 사용하는 경우 best practice에 대해 설명한다.
 
 ## Is it a Label or an Annotation?
 metadata 중 아래 조건을 만족할 경우 label로 사용해야 한다:

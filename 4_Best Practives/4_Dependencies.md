@@ -1,4 +1,4 @@
-Chart.yaml에서 설정 가능한 dependencies에 대한 best practice에 대해 설명한다.
+Chart.yaml에서 설정 가능한 dependencies의 best practice에 대해 설명한다.
 
 ## Versions
 가능하다면 1개의 버전을 고정하지 않고 범위를 설정하는 것이 좋다. 권장되는 방식은 패치 버전 매칭이다:

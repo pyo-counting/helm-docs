@@ -1,3 +1,5 @@
+**Note**: .Values 객체에서 template으로 문자열을 주입할 때 quote 함수를 사용해 쿼팅하는 것을 추천한다.
+
 template 함수는 `functionName arg1 arg2 ...`와 같은 형식으로 사용한다.
 
 helm은 60개가 넘는 함수를 지원한다. 이 중 일부는 Go template language에 정의됐으며, 이외 대부분은 Sprig template library에 정의됐다.
@@ -92,4 +94,4 @@ lookup 함수는 helm의 k8s 연결을 이용해 k8s에 쿼리한다. API server
 helm template, helm install | upgrade | delete | rollback --dry-run 함수는 k8s API server와 연결하지 않기 때문에 lookup 함수에 대해 빈 목록을 반환한다.
 
 ## Operators are functions
-tempalte에서 q, ne, lt, gt, and, or와 같은 연산자는 모두 함수다. 파이프라인 내에서 `(`, `)`을 이용해 작업을 그룹화할 수 있다.
+tempalte에서 eq, ne, lt, gt, and, or와 같은 연산자는 모두 함수다. 파이프라인 내에서 `(`, `)`을 이용해 작업을 그룹화할 수 있다.

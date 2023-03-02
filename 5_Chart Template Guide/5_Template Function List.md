@@ -1,1 +1,1 @@
-**NOTE**: toYaml 함수는 doc에 따로 설명이 안되어있는 것으로 보인다. 이는 함수 이름 그대로 key,value를 갖는 매개변수에 대해 yaml 형식으로 반환한다.
+**NOTE**: tpl 함수는 doc에 따로 설명이 안되어있는 것으로 보인다. Chart Development Tips and Tricks 페이지에서 확인 가능하다.

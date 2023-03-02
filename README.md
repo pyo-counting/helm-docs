@@ -15,15 +15,22 @@
 - template 파일 이름은 camelcase가 아닌 dash 표기법을 사용한다.
 - YAML 주석은 helm install --debug 명령어 사용 시 조회가 되지만 template 주석은 조회가 되지 않으며 단지 template에 대한 설명을 위한 기능이다.
 - helm create 명령어는 기본적으로 imagePullPolicy 필드를 IfNotPresent로 설정한다.
-- helm 변수에 대한 우선순위는 values.yaml > --values > --set
+- helm 변수에 대한 우선순위는 values.yaml < 부모 chart의 values.yaml 파일 < --values < --set
 - values.yaml 파일에는 각 변수에 대한 설명이 포함된 주석이 있어야 한다. 주석은 변수의 이름으로 시작해야 한다.
+- <key>=null, yaml sequnce는 [],을 사용해 null 값과 빈값을 설정할 수 있다.
 - template 파일 이름은 k8s resource의 종류를 파악할 수 있도록 해야 한다.
 - `{{ define }}`을 이용해 생성된 template은 하위 chart에서도 접근이 가능하기 때문에 이름에 namespace를 가져야 한다.
+- 대부분의 변수는 values.yaml 파일에 기본값이 있으므로 `default` 함수를 사용할 필요가 없지만 values.yaml 파일에 정의될 수 없는 계산을 통해 값이 결정되는 경우에 대해서 유용하다.
+helm template, helm install | upgrade | delete | rollback --dry-run 명령어는 k8s API server와 연결하지 않기 때문에 `lookup` 함수에 대해 빈 목록을 반환한다.
 
 ### 명령어
+- Global flag:
+    - `--debug`: 자세한 출력
 - `helm search`: ArtifactHub 또는 로컬에 추가된 repo를 대상으로 chart를 검색한다.
     - `hub`: Artifact Hub에서 chart를 검색한다.
     - `repo`: repo에서 chart를 검색한다.
+- `helm install`: chart를 배포한다.
+    - `--dry-run`: chart 설치를 시뮬레이션한다.
 - `helm uninstall`: release를 삭제한다.
     - `--keep-history`: release history를 보존한다. 이 후 rollback이 가능하다.
 - `helm pull`: chart install 없이 패키지만 다운로드 한다.

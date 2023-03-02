@@ -6,7 +6,7 @@
 - helm은 go의 template을 사용한다. go의 내장 함수, Spring library(env, expandenv 제외), include, required 함수를 사용할 수 있다.
 - template 함수의 단점을 보완하기 위해 include 함수를 사용한다.
 - cm, secrets를 업데이트할 때 해당 리소스를 사용하는 po에 대한 재배포가 필요할 수 있다. 이를 위해 helm chart 내에서 편법을 사용해 po가 재배포될 수 있도록 할 수 있다.
-- templates/ 디렉토리에 underscore(_)로 시작하는 파일은 k8s manifest 파일로 간주되지 않는다. 관습에 따라 helper template, partials은 _heplers.tpl 파일에 작성된다.
+- templates/ 디렉토리에 underscore(_)로 시작하는 파일은 k8s manifest 파일로 간주되지 않는다. 관습에 따라 helper template, partials은 _heplers.tpl 파일에 작성된다. .yaml 접미사를 사용해 YAML 파일을, .tpl 접미사를 사용해 helper를 나타내는 것을 권장한다.
 - 최상위 chart의 values.yaml 파일에는 하위 chart의 변수의 값도 설정할 수 있다.
 - global 변수도 설정이 가능하며 정의된 chart와 하위 chart에서 접근이 가능하다.
 - chart value에 대해 명시적으로 모든 문자열은 quoting하는 것을 권장한다.

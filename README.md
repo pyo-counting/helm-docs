@@ -1,6 +1,20 @@
 # Helm
 ## Helm 학습
 버전: v3.11.1
+
+추가 정리 필요 내용
+
+- chart hook
+- chart test
+- library chart
+- chart provenance and integrity
+- chart repository
+- OCI-based chart registry
+- advanced technique
+- k8s rbac
+- k8s CRD
+- helm plugin
+
 ### 요약
 - Helm은 각 설치 요청에 대해 새로운 Release를 생성함으로써 k8s에 Chart를 설치한다. 원하는 Chart는 archive 되어(*.tgz)로 Repository에 배포된다(Artifact Hub는 여러 repo들에 속한 chart를 관리한다).
 - helm은 go의 template을 사용한다. go의 내장 함수, Spring library(env, expandenv 제외), include, required 함수를 사용할 수 있다.

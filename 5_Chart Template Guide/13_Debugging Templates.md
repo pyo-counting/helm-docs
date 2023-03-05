@@ -1,6 +1,6 @@
 렌더링된 template은 k8s API server로 전송되며 YAML 파일 포맷이 아닌 이유로 오류가 발생할 수 있으므로 template 디버깅은 까다로울 수 있다.
 
-디버그를 도와줄 수 있는 몇 가지 명령어가 있다.
+디버깅을 도와줄 수 있는 몇 가지 명령어가 있다.
 
 - helm lint: best practice를 따르는지 확인하는 데 사용되는 도구
 - helm template --debug: template을 로컬에서 테스트 렌더링

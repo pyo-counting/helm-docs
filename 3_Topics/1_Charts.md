@@ -463,7 +463,7 @@ spec:
    # ...
 ```
 
-helm은 template/ 디렉토리 내의 CRD를 먼저 k8s API server에 업로드함으로써 templates/ 디렉터리에 정의된 CronTab resource에 대한 생성을 보장한다.
+helm은 templates/ 디렉토리 내의 CRD를 먼저 k8s API server에 업로드함으로써 templates/ 디렉터리에 정의된 CronTab resource에 대한 생성을 보장한다.
 
 ### Limitations on CRDs
 k8s의 object와 다르게 CRD는 global 설치된다. 이러한 이유로 CRD에 대한 관리 시 유의해야 하며 몇 가지 제약 사항도 있다:

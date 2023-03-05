@@ -5,7 +5,9 @@ subchart와 관련해 몇 가지 중요 사항이 있다.
 1. subchart는 "stand-alone"이기 때문에 부모 chart에 의존하면 안된다.
 2. 그렇기 때문에 subchart는 부모의 변수에 접근할 수 없다.
 3. 부모 chart는 subchart의 변수를 덮어쓸 수 있다.
-4. helm은 모든 chart에서 접근할 수 잇는 global 변수의 개념을 갖는다.
+4. helm은 모든 chart에서 접근할 수 있는 global 변수의 개념을 갖는다.
+
+**NOTE**: 위와 같은 제한 사항은 helper 기능을 위한 library chart에는 반드시 적용되는 것은 아니다.
 
 ## Creating a Subchart
 

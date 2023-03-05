@@ -64,7 +64,7 @@ data:
 
 변수는 "global"하지 않다. 변수는 선언된 구문 내에서 유효하다. 위에서 $relname은 template의 최상위에 정의됐기 때문에 전체 template에서 유효하다. 하지만 $key, $val은 range 구문 내에서만 유효하다.
 
-예외적으로 `$`은 root context를 가리키는 변수다.
+예외적으로 `$`은 root context를 가리키는 유일한 변수로 어떤 구문에서 사용하더라도 동일하게 동작한다.
 
 ``` yaml
 {{- range .Values.tlsSecrets }}

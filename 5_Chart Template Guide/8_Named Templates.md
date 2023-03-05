@@ -1,6 +1,6 @@
 여기서는 named template을 선언하고 사용하는 방법에 대해 설명한다. named template(partial, subtemplate이라고도 불림)은 파일 내 정의되며 이름을 갖는다.
 
-templating 작명 시 주의할점: template 이름은 global이다. 동일한 이름의 template을 선언할 경우 마지막으로 로드된 것이 사용된다. subchart 내 template도 상위 template 레벨에서 같이 컴파일되기 때문에 주의해야 한다.
+template 작명 시 주의할점: template 이름은 global이다. 동일한 이름의 template을 선언할 경우 마지막으로 로드된 것이 사용된다. subchart 내 template도 상위 template 레벨에서 같이 컴파일되기 때문에 주의해야 한다.
 
 널리 사용되는 작명 규칙 중 하나는 chart 이름을 접두사로 사용하는 것이다: `{{ define "mychart.labels" }}`. chart 이름을 접두사로 사용하면 동일한 이름의 template을 구현하는 두 개의 다른 chart로 인해 발생할 수 있는 충돌을 피할 수 있다.
 
@@ -46,11 +46,25 @@ data:
 
 When the template engine reads this file, it will store away the reference to mychart.labels until template "mychart.labels" is called. Then it will render that template inline. So the result will look like this:
 
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: running-panda-configmap
+  labels:
+    generator: helm
+    date: 2016-11-02
+data:
+  myvalue: "Hello World"
+  drink: "coffee"
+  food: "pizza"
+```
+
 **Note**: define은 template으로 호출되지 않는 한 출력을 생성하지 않는다.
 
 일반적으로 위와 같은 template을 partials 파일(일반적으로 _helpers.tpl)에 저장한다.
 
-define 함수는 관련 설명을 주석(`{{/* ... */}}`)을 통해 설명해야 한다.
+define 함수는 관련 설명을 주석(`{{/* ... */}}`)을 통해 설명하는 것이 관습이다.
 
 ## Setting the scope of a template
 위 named template 내에서 객체를 통해 변수의 값을 이용해본다:
@@ -88,7 +102,7 @@ metadata:
     version:
 ```
 
-template action 사용 시 어떠한 scope도 전달하지 않았기 때문에 접근이 불가능한 것이다. 이를 위해 아래와 같이 변경하면 된다.
+template action 사용 시 어떠한 scope도 전달하지 않았기 때문에 접근이 불가능한 것이다. 이를 위해 아래와 같이 변경하면 된다.  
 
 ``` yaml
 apiVersion: v1

@@ -1,10 +1,10 @@
 제어 구문(template에서는 "action"으로 부름)은 template 작성자에게 template 생성 흐름을 제어할 수 있는 기능을 제공한다. helm의 template 언어는 다음과 같은 제어 구문을 제공한다.
 
-- `if / else`: 조건 구문 생성
+- `if / else if / else`: 조건 구문 생성
 - `with`: 스코프 명시
 - `range`: "for each" 스타일의 루프를 제공
 
-추가적으로 template 세그먼트를 선언하고 사용하기 위해 몇 가지 action을 더 제공한다:
+추가적으로 template 세그먼트를 선언하고 사용하기 위한 몇 가지 action을 더 제공한다:
 
 - `define`: template 내에서 새로운 이름 있는 template을 선언
 - `template`: 이름 있는 template을 import
@@ -23,7 +23,7 @@
 {{ end }}
 ```
 
-위 if 문 내 조건식에서는 변수가 아닌 PIPELINE을 사용한다. 제어 구문에서는 단순히 변수 뿐만 아니라 전체 파이프라인을 사용할 수 있다.
+위 if 문 내 조건식에서는 변수가 아닌 PIPELINE을 사용한다. 제어 구문에서는 단순히 변수 뿐만 아니라 전체 파이프라인을 사용할 수 있음을 나타내기 위함이다.
 
 변수가 아래와 같은 값일 경우 파이프라인은 false로 판단된다:
 
@@ -32,6 +32,8 @@
 - an empty string
 - a nil (empty or null)
 - an empty collection (map, slice, tuple, dict, array)
+
+이외의 경우 모두 true다.
 
 ## Controlling Whitespace
 template 엔진은 `{{`, `}}` 내 모든 공백을 제거하지만 이외 공백은 제거하지 않는다.
@@ -72,7 +74,24 @@ data:
 **{{- end }}
 ```
 
+즉 공백이 제거된 결과는 다음과 같다.
+
+``` yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: telling-chimp-configmap
+data:
+  myvalue: "Hello World"
+  drink: "coffee"
+  food: "PIZZA"
+
+  mug: "true"
+```
+
 > template 내 공백 제어와 관련해 자세한 내용은 [Official Go template documentation](https://pkg.go.dev/text/template?utm_source=godoc)을 참고한다.
+
+indent template 함수를 사용해 들여쓰기도 가능하다.
 
 ## Modifying scope using with
 `with`는 변수 scoping에 사용된다. .를 이용한 참조는 현재 scope에 대한 참조임을 인지해야 한다. 그러므로 .Values는 현재 scope에서 Values 객체를 호출하는 것이다.
@@ -87,7 +106,7 @@ data:
 
 with 구문을 사용해 현재 scope(.)를 다른 객체로 설정할 수 있다.
 
-주의할 점은 이렇게 scope가 변경됐을 때 .을 이용해 상위 객체에 접근할 수 없다. 그렇기 때문에 위 예시는 오류가 발생한다.
+주의할 점은 이렇게 scope가 변경됐을 때 .을 이용해 상위 객체에 접근할 수 없다.
 
 ``` yaml
   {{- with .Values.favorite }}
@@ -140,4 +159,4 @@ helm template 내에서는 `tuple` 함수를 제공한다. `tuple` 함수는 고
     {{- end }}
 ```
 
-list, typle 외에도 key-value(map 또는 dict)이 잇는 collection을 range에 사용할 수 있다.
+list, tuple 외에도 key-value(map 또는 dict)이 있는 collection을 range에서 사용할 수 있다.

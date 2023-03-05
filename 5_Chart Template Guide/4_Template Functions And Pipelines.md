@@ -94,4 +94,4 @@ lookup 함수는 helm의 k8s 연결을 이용해 k8s에 쿼리한다. API server
 helm template, helm install | upgrade | delete | rollback --dry-run 함수는 k8s API server와 연결하지 않기 때문에 lookup 함수에 대해 빈 목록을 반환한다.
 
 ## Operators are functions
-tempalte에서 eq, ne, lt, gt, and, or와 같은 연산자는 모두 함수다. 파이프라인 내에서 `(`, `)`을 이용해 작업을 그룹화할 수 있다.
+tempalte에서 eq, ne, lt, gt, and, or와 같은 연산자는 모두 함수로 구현된다. 파이프라인 내에서 `(`, `)`을 이용해 연산을 그룹화할 수 있다.

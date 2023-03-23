@@ -16,6 +16,20 @@
 - helm plugin
 
 ### 요약
+- helm chart의 기본 구조를 나타내는 test/ 디렉토리 하위 구조는 다음과 같다.
+    ```
+    test/
+      Chart.yaml          # A YAML file containing information about the chart
+      LICENSE             # OPTIONAL: A plain text file containing the license for the chart
+      README.md           # OPTIONAL: A human-readable README file
+      values.yaml         # The default configuration values for this chart
+      values.schema.json  # OPTIONAL: A JSON Schema for imposing a structure on the values.yaml file
+      charts/             # A directory containing any charts upon which this chart depends.
+      crds/               # Custom Resource Definitions
+      templates/          # A directory of templates that, when combined with values,
+                          # will generate valid Kubernetes manifest files.
+      templates/NOTES.txt # OPTIONAL: A plain text file containing short usage notes
+    ``` 
 - Helm은 각 설치 요청에 대해 새로운 Release를 생성함으로써 k8s에 Chart를 설치한다. 원하는 Chart는 archive 되어(*.tgz)로 Repository에 배포된다(Artifact Hub는 여러 repo들에 속한 chart를 관리한다).
 - helm은 go의 template을 사용한다. go의 내장 함수, Spring library(env, expandenv 제외), include, required 함수를 사용할 수 있다.
 - template action의 단점을 보완하기 위해 include 함수를 사용한다.

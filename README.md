@@ -15,6 +15,9 @@
 - k8s CRD
 - helm plugin
 
+### 오류
+- define 함수에 .가 아닌 다른 객체를 넘겨줬을 떄, define 정의 내에서 $ 접근 시, 루트가 아닌 빈 객체에 접근한다. 대신 .를 넘겨줬을 때는 루트에 접근됨
+
 ### 요약
 - helm chart의 기본 구조를 나타내는 test/ 디렉토리 하위 구조는 다음과 같다.
     ```
@@ -65,7 +68,7 @@
     - YAML 파싱이 실패했지만 생성된 내용을 확인하기 위한 방법은 문제가 발생하는 구문을 주석처리한 다음 helm install --dry-run --debug으로 다시 실행해보는 것이다:
 - tempalte에서 eq, ne, lt, gt, and, or와 같은 연산자는 모두 함수로 구현된다. 파이프라인 내에서 `(`, `)`을 이용해 연산을 그룹화할 수 있다.
 - YAML은 크게 collection, scalar 타입을 제공한다. collection 타입의 경우 map과 sequnce가 있다. 자세한 내용은 5_Chart Template Guide - 15_Appendix YAML Techniques.md 파일을 참고한다.
-- template 내에서 변수는 다른 객체에 대한 이름있는 참조다. 예를 들어 name이라는 변수에 .Values 객체를 할당하고자 할 경우 `$name := .Values`와 같이 사용할 수 있다. name이라는 변수는 `{{ $name }}`과 같이 사용할 수 있다. 제어 구문 내에서 선언한 변수는 해당 구문 내에서만 유효하며, 제어 구문 밖에 정의된 변수는 template 파일에 정의된 것으로 다른 template에서도 접근이 가능하다. `$`은 root scope를 가리키는 변함 없는  값이다. `$`는 template 실행 시 root scope에 매핑되며 실행 기간 동안 변하지 않는다.
+- template 내에서 변수는 다른 객체에 대한 이름있는 참조다. 예를 들어 name이라는 변수에 .Values 객체를 할당하고자 할 경우 `$name := .Values`와 같이 사용할 수 있다. name이라는 변수는 `{{ $name }}`과 같이 사용할 수 있다. 제어 구문 내에서 선언한 변수는 해당 구문 내에서만 유효하며, 제어 구문 밖에 정의된 변수는 template 파일에 정의된 것으로 다른 template에서도 접근이 가능하다. `$`은 root scope를 가리키는 변함 없는 값이다. `$`는 template 실행 시 root scope에 매핑되며 실행 기간 동안 변하지 않는다.
 - template에서 제어 구문은 action이라고 부른다. `if / else if / else`, `with`, `range` action을 제공하며 추가적으로 template과 관련해 `define`, `template`, `block` action을 제공한다.
     - `if / else if / else` 구문은 아래의 경우에 대해 false로 판단하며 이외 모든 경우에 대해 true로 판단한다.
         - a boolean false

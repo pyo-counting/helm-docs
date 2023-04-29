@@ -15,10 +15,11 @@
 - k8s CRD
 - helm plugin
 
-### 오류
-- define 함수에 .가 아닌 다른 객체를 넘겨줬을 떄, define 정의 내에서 $ 접근 시, 루트가 아닌 빈 객체에 접근한다. 대신 .를 넘겨줬을 때는 루트에 접근됨
+### 알아낸 점
+- named template(define 함수를 통해 정의)에 .가 아닌 다른 객체를 넘겨줬을 떄, define 정의 내에서 $는 루트가 아닌 것 같다(.를 넘겨줬을 때는 루트에 접근됨) => 아마도 
 
 ### 요약
+- Helm은 각 설치 요청에 대해 새로운 Release를 생성함으로써 k8s에 Chart를 설치한다. 원하는 Chart는 archive 되어(*.tgz)로 Repository에 배포된다(Artifact Hub는 여러 repo들에 속한 chart를 관리한다).
 - helm chart의 기본 구조를 나타내는 test/ 디렉토리 하위 구조는 다음과 같다.
     ```
     test/
@@ -35,9 +36,8 @@
       .helmignore
     ```
 - .helmignore 파일은 helm chart .tgz 패키징시 포함하고 싶지 않은 파일을 명시하는 데 사용할 수 있다.
-- chart 내 templates/NOTES.txt 파일은 EADME.md 파일과 다르게 chart 설치 및 정보 조회 시, template으로 변환 및 줄력된다.
+- chart 내 templates/NOTES.txt 파일은 EADME.md 파일과 다르게 chart 설치 및 정보 조회 시, template으로 변환되어 출력된다.
 - templates/ 디렉터리 내 디렉터리를 추가해 여러 template를 구분해 관리하는 것도 가능하다.
-- Helm은 각 설치 요청에 대해 새로운 Release를 생성함으로써 k8s에 Chart를 설치한다. 원하는 Chart는 archive 되어(*.tgz)로 Repository에 배포된다(Artifact Hub는 여러 repo들에 속한 chart를 관리한다).
 - helm은 go의 template을 사용한다. go의 내장 함수, Spring library(env, expandenv 제외), include, required 함수를 사용할 수 있다.
 - template action의 단점을 보완하기 위해 include 함수를 사용한다.
     - template action의 경우 결과 값을 파이프라이닝 할 수 없으며, template action의 인자로 변수를 사용할 수 없다.
@@ -57,7 +57,6 @@
 - helm create 명령어는 기본적으로 imagePullPolicy 필드를 IfNotPresent로 설정한다.
 - template 파일 이름은 k8s resource의 종류를 파악할 수 있도록 해야 한다.
 - 대부분의 변수는 values.yaml 파일에 기본값이 있으므로 `default` 함수를 사용할 필요가 없지만 values.yaml 파일에 정의될 수 없는 계산을 통해 값이 결정되는 경우에 대해서 유용하다.
-- helm template, helm install | upgrade | delete | rollback --dry-run 명령어는 k8s API server와 연결하지 않기 때문에 `lookup` 함수에 대해 빈 목록을 반환한다.
 - values.yaml 파일에는 여러 ---, ...을 사용해 여러 values.yaml 파일을 명시할 수 있지만 첫 번째 파일만 사용한다. template에도 사용 가능하지만 디버깅이 어렵기 때문에 권장하지 않는다.
 - template 디버깅 방법
     - helm lint: best practice를 따르는지 확인하는 데 사용되는 도구
@@ -65,7 +64,8 @@
     - helm install --dry-run --debug: 서버에서 template을 렌더링한 다음 결과 manifest 파일을 반환
     - helm install --disable-openapi-validation:
     - helm get manifest: 서버에 설치된 template을 조회
-    - YAML 파싱이 실패했지만 생성된 내용을 확인하기 위한 방법은 문제가 발생하는 구문을 주석처리한 다음 helm install --dry-run --debug으로 다시 실행해보는 것이다:
+    - YAML 파싱이 실패했지만 생성된 내용을 확인하기 위한 방법은 문제가 발생하는 구문을 주석처리한 다음 helm install --dry-run --debug으로 다시 실행해보는 것이다.
+- helm template, helm install | upgrade | delete | rollback --dry-run 명령어는 k8s API server와 연결하지 않기 때문에 `lookup` 함수에 대해 빈 목록을 반환한다.
 - tempalte에서 eq, ne, lt, gt, and, or와 같은 연산자는 모두 함수로 구현된다. 파이프라인 내에서 `(`, `)`을 이용해 연산을 그룹화할 수 있다.
 - YAML은 크게 collection, scalar 타입을 제공한다. collection 타입의 경우 map과 sequnce가 있다. 자세한 내용은 5_Chart Template Guide - 15_Appendix YAML Techniques.md 파일을 참고한다.
 - template 내에서 변수는 다른 객체에 대한 이름있는 참조다. 예를 들어 name이라는 변수에 .Values 객체를 할당하고자 할 경우 `$name := .Values`와 같이 사용할 수 있다. name이라는 변수는 `{{ $name }}`과 같이 사용할 수 있다. 제어 구문 내에서 선언한 변수는 해당 구문 내에서만 유효하며, 제어 구문 밖에 정의된 변수는 template 파일에 정의된 것으로 다른 template에서도 접근이 가능하다. `$`은 root scope를 가리키는 변함 없는 값이다. `$`는 template 실행 시 root scope에 매핑되며 실행 기간 동안 변하지 않는다.
@@ -78,7 +78,7 @@
         - an empty collection (map, slice, tuple, dict, array)
     - `with` 구문을 사용해 해당 구문 내에서 변수 스코프를 변경할 수 있다. template 내에서는 기본적으로 root 스코프이므로 Values, Release와 같은 객체에 접근이 가능하지만 with 구문을 사용해 이를 변경할 수 있는 것이다. 스코프가 변경됐더라도 $를 사용해 root scope에 접근할 수 있다.
     - `range` 구문은 for-each 구문이다. range 구문에는 순회할 변수가 명시되는데, 이 때 변수의 index, key, value를 변수에 할당할 수 있다.
-- `{{ }}` template 지시자의 경우 앞 또는 뒤  공백 제어를 위해 -문자를 사용할 수 있다. 이 때 개행 문자 역시 공백으로 간주되며 `{{- 3 }}`의 경우 왼쪽 공백을 모두 삭제, 오른쪽 공배는 삭제하지 않으며 3을 출력한다.
+- `{{ }}` template 지시자의 경우 앞 또는 뒤  공백 제어를 위해 -문자를 사용할 수 있다. 이 때 개행 문자 역시 공백으로 간주되며 `{{- test }}`의 경우 왼쪽 공백을 모두 삭제, 오른쪽 공배는 삭제하지 않으며 test 문자열을 출력한다.
 
     
 ### 명령어
@@ -106,3 +106,6 @@
 - `helm template`: 로컬 환경에서 chart를 렌더링하고 결과를 출력한다.
 - `helm repo`: repo 관리 명령어
     - `update`: 로컬 환경에 repo에 대한 데이터를 업데이트한다.
+
+### 함수
+- `quote`, `squote`: 두 함수 모두 문자열(숫자, boolean은 하지 않음)을 쿼팅(quoting)하는데 사용된다. quote는 ", squote는 '를 사용해 쿼팅한다. 

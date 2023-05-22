@@ -5,7 +5,7 @@
 - helm install, helm upgrade 명령어의 -f flag로 전달된 파일
 - helm install, helm upgrade 명령어의 --set flag로 전달된 변수
 
-위는 우선순위를 나타내기도 한다. 현재 chart.yaml 파일내 변수가 기본 값이며, 부모 chart의 values.yaml 파일에 의해 재정의될 수 있으며 사용자가 chart 생성 또는 업데이트 시 전달되는 파일 또는 파라미터에 의해 다시 재정의 될 수도 있다.
+위는 우선순위를 나타내기도 한다. 현재 chart의 values.yaml 파일 내 변수가 기본 값이며, 부모 chart의 values.yaml 파일에 의해 변수들이 재정의될 수 있으며, 사용자가 chart 생성 또는 업데이트 시 전달하는 파일 또는 파라미터에 의해 다시 재정의 될 수도 있다.
 
 While structuring data this way is possible, the recommendation is that you keep your values trees shallow, favoring flatness. When we look at assigning values to subcharts, we'll see how values are named using a tree structure.
 

@@ -47,6 +47,7 @@
 - templates/ 디렉토리에 underscore(_)로 시작하는 파일은 k8s manifest 파일로 간주되지 않는다. 관습에 따라 helper template, partials은 _heplers.tpl 파일(named template을 정의)에 작성된다. .yaml 접미사를 사용해 YAML 파일, .tpl 접미사를 사용해 helper를 나타내는 것을 권장한다.
 - 최상위 chart의 values.yaml 파일에는 하위 chart의 변수의 값도 설정할 수 있다. global 변수도 설정이 가능하며 정의된 해당 chart와 하위 chart에서 `{{ .Values.global.변수이름 }}`와 같이 접근이 가능하다.
 - helm 변수에 대한 우선순위는 values.yaml < 부모 chart의 values.yaml 파일 < --values < --set
+    - 부모 chart, -f, --set flag로 전달되는 values.yaml 파일 또는 변수에 의해 chart 자신의 values.yaml 파일 자체가 덮어씌워지는게 아니라 전달된 파일 또는 변수가 자신의 values.yaml 파일과 병합될 떄 우선순위를 갖고 덮어씌워진다는 것이다.
 - values.yaml 파일에는 각 변수에 대한 설명이 포함된 주석이 있어야 한다. 주석은 변수의 이름으로 시작해야 한다.
 - YAML 주석은 helm install --debug 명령어 사용 시 조회가 되지만 template 주석은 조회가 되지 않으며 단지 template에 대한 설명을 위한 기능이다.
 - values.yaml 파일 내 변수에 대해 \<key\>=null, yaml sequnce는 [],을 사용해 null 값과 빈값을 설정할 수 있다.

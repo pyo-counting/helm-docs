@@ -20,6 +20,7 @@
 
 ### 요약
 - Helm은 각 설치 요청에 대해 새로운 Release를 생성함으로써 k8s에 Chart를 설치한다. 원하는 Chart는 archive 되어(*.tgz)로 Repository에 배포된다(Artifact Hub는 여러 repo들에 속한 chart를 관리한다).
+- chart 설치 시, helm 명령어는 chart의 모든 resource가 정상 실행될 때까지 기다리지 않는다. 사용자는 `helm status` 명령어를 사용해 release의 상태를 조회해야 한다.
 - helm chart의 기본 구조를 나타내는 test/ 디렉토리 하위 구조는 다음과 같다.
     ```
     test/
@@ -93,6 +94,7 @@
     - `--disable-openapi-validation`: 설치 프로세스 중 렌더링된 template을 k8s Open API Schema에 대해 유효성 검증을 하지 않는다.
 - `helm get`:
     - `manifest`:
+- `helm history`: release의 배포 revision 목록을 보여준다.
 - `helm uninstall`: release를 삭제한다.
     - `--keep-history`: release history를 보존한다. 이 후 rollback이 가능하다.
 - `helm pull`: chart install 없이 패키지만 다운로드 한다.
@@ -103,6 +105,7 @@
     - `--timeout`: helm install/rollback 명령어에서도 사용. k8s 명령어가 완료될 때까지 helm client가 기다리는 시간(기본값: 5m)
     - `--wait`: helm install/rollback 명령어에서도 사용. release가 성공으로 표시하기 위해 모든 po가 ready state, pvc가 바운딩, deploy가 최소 po 개수를 만족(desired - maxUnavailable), svc가 IP를 보유(그리고 loadbalancer일 경우 ingress도 보유)할 때까지 기다린다. 이는 --timeout 값까지 기다린다. timeout에 도달하면 release는 FAILED로 표시된다.
 - `helm status`: release의 상태를 조회한다.
+- `helm show`:  chart에 대한 상세 정보를 출력한다. `all`, `chart`, `crds`, `readme`, `values` subcommand를 지원한다.
 - `helm lint`: 
 - `helm template`: 로컬 환경에서 chart를 렌더링하고 결과를 출력한다.
 - `helm repo`: repo 관리 명령어

@@ -19,7 +19,6 @@ k8s 클러스터에서 패키지를 관리하기 위해 helm를 사용하는 기
 install 동안 helm 클라이언트는 생성된 resource, release 상태, 추가 설정에 대한 유효한 정보를 출력한다.
 
 helm은 아래 순서대로 resource를 설치한다:
-
 - Namespace
 - NetworkPolicy
 - ResourceQuota
@@ -68,17 +67,16 @@ helm은 종료되기 전에 모든 resource가 실행되기까지 기다리지 �
 --set flag가 --values보다 우선순위가 높다. `helm get values <release-name>` 명령어를 사용해 해당 reelase에 --set flag로 설정한 변수를 조회할 수 있다. `helm upgrade` 명령어에 --reset-values flag를 사용해 --set flag로 설정한 변수를 초기화할 수 있다.
 
 ### The Format and Limitations of --set
-- 기본적으로 --set \<key\>=\<value\> 형식을 사용해 변수를 설정한다.
+- 기본적으로 --set `<key>=<value>` 형식을 사용해 변수를 설정한다.
 - , 구분자를 사용해 --set flag 내 여러 변수를 설정할 수 있다.
-- yaml map은 .을 사용해 접근하고 sequence는 \[index\]를 사용해 접근한다.
+- yaml map은 `.`을 사용해 접근하고 sequence는 `[index]`를 사용해 접근한다.
 - yaml sequnce는 {value1, value, ...} 형식을 사용해 값을 설정할 수 있다.
-- \<key\>=null, yaml sequnce는 \[\],을 사용해 null 값과 빈값을 설정할 수 있다.
+- `<key>=null`, yaml sequnce는 `[]`,을 사용해 null 값과 빈값을 설정할 수 있다.
 - --set flag를 사용할 때 특수 문자의 경우 \를 사용해 escape 처리해야한다.
 - 중첩이 많은 데이터 구조의 경우 --set flag 사용에 어려움이 있을 수 있다. 그렇기 때문에 values.yml 파일 형식을 디자인할 때 --set flag 사용에 대해 고려하는 것이 좋다.
 
 ### More Installation Methods
 `helm install` 명령어는 여러 소스로부터 chart를 설치할 수 있다:
-
 - chart repo
 - 로컬 chart 아카이브(`helm install foo foo-0.0.1.tgz`)
 - unpacked chart 디렉토리(`helm install foo path/to/foo`)
@@ -91,18 +89,17 @@ helm은 종료되기 전에 모든 resource가 실행되기까지 기다리지 �
 
 ## Helpful Options for Install/Upgrade/Rollback
 설치, 업그레이드, 롤백에 대한 helm의 동작을 커스터마이징하기 위해 아래 옵션을 사용할 수 있다.
-
 - --timeout: k8s 명령어가 완료될 때까지 기다리는 시간. 기본 값은 5m0s(Go duration 형식)
 - --wait: release가 성공으로 표시하기 위해 모든 po가 ready state, pvc가 바운딩, deploy가 최소 po 개수를 만족(desired - maxUnavailable), svc가 IP를 보유(그리고 loadbalancer일 경우 ingress도 보유)할 때까지 기다린다. 이는 --timeout 값까지 기다린다. timeout에 도달하면 release는 FAILED로 표시된다.
-
-    **Note**: deploy의 rolling update 전략에 대해 replicas가 1, maxUnavailable이 0으로 설정되지 않을 경우, --wait은 ready 상태의 최소 po를 충족하면 바로 반환된다.
+    > **Note**: deploy의 rolling update 전략에 대해 replicas가 1, maxUnavailable이 0으로 설정되지 않을 경우, --wait은 ready 상태의 최소 po를 충족하면 바로 반환된다.
 - --no-hooks: 명령어에 대한 hook 실행을 건너뛴다.
-- --recreate-pods(upgrade, rollback 명령어에만 유효): This flag will cause all pods to be recreated (with the exception of pods belonging to deployments). DEPRECATED in Helm 3
+- --recreate-pods(upgrade, rollback 명령어에만 유효): This flag willㅌ cause all pods to be recreated (with the exception of pods belonging to deployments). DEPRECATED in Helm 3
 
 ## 'helm uninstall': Uninstalling a Release
 
 ## 'helm repo': Working with Repositories
 chart repo는 자주 변경될 수 있기 때문에 `helm repo update` 명령어를 사용해 로컬 데이터를 업데이트해야 한다.
+
 ## Creating Your Own Charts
 패키지된 chart는 repo에 배포할 수 있다.
 
